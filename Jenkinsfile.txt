@@ -1,5 +1,5 @@
 pipeline{
-	agent any{
+	agent any
 		stages{
 			stage('Sonarqube Analysis'){
 				steps{
@@ -23,5 +23,4 @@ pipeline{
 				}
 			}
 		}
-	}
 }
