@@ -1,0 +1,35 @@
+pipeline{
+    agent any
+    stages{
+		stage('Sonarqube Analysis'){
+            steps{
+                script{
+                    scannerHome = tool 'sonarqube'
+                }
+                withSonarQubeEnv('sonarqube'){
+                    sh '/var/lib/jenkins/tools/hudson.plugins.sonar.SonarRunnerInstallation/sonarqube/bin/sonar-scanner'
+                }
+            }
+		}
+	
+		stage("Quality Gate"){
+			steps{
+                timeout(time: 5, unit: 'MINUTES'){
+                    waitForQualityGate abortPipeline: false, credentialsId:'sonarqube-jenkins'
+                }
+            }
+		}
+       
+		stage('Maven Build'){
+            steps{
+                sh label: '', script: 'mvn clean package'
+            }
+		}
+		
+        stage('Result'){
+            steps{
+                echo 'Successfully Completed'
+            }
+        }
+    }
+}
